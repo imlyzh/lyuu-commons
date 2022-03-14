@@ -3,6 +3,13 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Reg(pub u8);
 
+impl Reg {
+    pub fn new(value: u8) -> Reg {
+        assert!(value <= 0b11111);
+        Reg(value)
+    }
+}
+
 pub type Rd = Reg;
 pub type Rs1 = Reg;
 pub type Rs2 = Reg;
