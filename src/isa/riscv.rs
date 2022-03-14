@@ -17,12 +17,16 @@ pub type Rs2 = Reg;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Csr(pub u16);
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Imm(pub u32);
+// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub type Imm32 = u32;
 
-pub type Shamt = Imm;
+pub type Immi8 = i8;
+pub type Immi16 = i16;
+pub type Immi32 = i32;
 
-pub type Zimm = Imm;
+pub type Shamt = Imm32;
+
+pub type Zimm = Imm32;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Pred(pub u8);
@@ -119,14 +123,14 @@ pub enum CsrOpType {
 
 pub enum RiscV {
     // rvi
-    Lui(Rd, Imm),
-    Auipc(Rd, Imm),
-    Jal(Rd, Imm),
-    Jalr(Rd, Rs1, Imm),
-    Branch(BrType, Rs1, Rs2, Imm),
-    Load(LoadType, Rd, Rs1, Imm),
-    Store(StoreType, Rs1, Rs2, Imm),
-    OpI(IOpType, Rd, Rs1, Imm),
+    Lui(Rd, Imm32),
+    Auipc(Rd, Imm32),
+    Jal(Rd, Immi32),
+    Jalr(Rd, Rs1, Immi16),
+    Branch(BrType, Rs1, Rs2, Immi16),
+    Load(LoadType, Rd, Rs1, Immi16),
+    Store(StoreType, Rs1, Rs2, Immi16),
+    OpI(IOpType, Rd, Rs1, Immi16),
     Op(OpType, Rd, Rs1, Rs2),
     Fence(IsFenceI, Pred, Succ),
     EOp(EOpType),
