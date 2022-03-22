@@ -10,3 +10,4 @@ name = "lyuu_commons"
 path = "src/lib.rs"
 
 [dependencies]
+modular-bitfield = "0.11.2"
