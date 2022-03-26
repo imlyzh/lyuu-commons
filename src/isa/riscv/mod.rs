@@ -1,4 +1,6 @@
 pub mod inst_binary;
+pub mod bare;
+
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Reg(pub u8);
