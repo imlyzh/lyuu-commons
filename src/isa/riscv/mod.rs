@@ -119,6 +119,7 @@ pub enum CsrOpType {
     Rc = 0b011,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RiscV {
     // rvi
     Lui(Rd, Imm32),
