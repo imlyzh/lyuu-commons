@@ -34,6 +34,7 @@ impl Display for Csr {
 }
 
 // #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub type Imm8 = u8;
 pub type Imm32 = u32;
 
 pub type Immi8 = i8;
@@ -42,7 +43,7 @@ pub type Immi32 = i32;
 
 pub type Shamt = Imm32;
 
-pub type Zimm = Imm32;
+pub type Zimm = Imm8;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Pred(pub u8);
