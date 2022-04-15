@@ -22,10 +22,13 @@ pub static CSR_MAP: Lazy<HashMap<usize, &str>> = Lazy::new(|| {
 
     let csr_def = include_str!("./csr_def");
     let csr_def = csr_def.trim().split('\n').map(|x| {
-        let mut r = x.trim().split(' ');
+        let mut r = x.trim().split('\t');
         let t = r.next().unwrap();
+        let z = r.next().unwrap();
+        let z = dbg!(z.trim_start_matches("0x"));
+        let z = usize::from_str_radix(z, 16).unwrap();
         (
-            r.next().unwrap().parse::<usize>().unwrap(),
+            z,
             t,
         )
     });
