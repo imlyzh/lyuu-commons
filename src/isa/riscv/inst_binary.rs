@@ -122,14 +122,12 @@ impl JType {
         let imm19_12 = self.imm19_12() as u32;
         let imm11 = self.imm11() as u32;
         let imm10_1 = self.imm10_1() as u32;
-        let r = (
+        (
             (imm10_1 << 1)  |
             (imm11 << 11)   |
             (imm19_12 << 12)|
             filling
-        ) as i32;
-        r
-
+        ) as i32
     }
 }
 

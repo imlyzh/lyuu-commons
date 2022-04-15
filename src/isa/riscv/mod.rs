@@ -1,7 +1,12 @@
-use std::fmt::Display;
-
 pub mod inst_binary;
 pub mod bare;
+pub mod reg;
+
+
+use std::fmt::Display;
+
+use self::reg::CSR_MAP;
+
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -29,7 +34,12 @@ pub struct Csr(pub u16);
 
 impl Display for Csr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "csr{}", self.0)
+        if let Some(r) = CSR_MAP.get(&self.0.into()).cloned() {
+            write!(f, "{}", r)
+        } else {
+            write!(f, "{}", self.0)
+        }
+            // .map_or_else(|| self.0.to_string(), identity);
     }
 }
 

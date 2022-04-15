@@ -19,7 +19,7 @@ pub const CLINT_MTINE: u64 = CLINT + 0xBFF8;
 
 
 pub const PLIC: u64 = 0x0c000000;
-pub const PLIC_PRIORITY: u64 = PLIC + 0x0;
+pub const PLIC_PRIORITY: u64 = PLIC;
 pub const PLIC_PENDING: u64 = PLIC + 0x1000;
 
 pub const fn plic_menable(hart: u64) -> u64 {
