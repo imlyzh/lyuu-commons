@@ -25,7 +25,7 @@ pub static CSR_MAP: Lazy<HashMap<usize, &str>> = Lazy::new(|| {
         let mut r = x.trim().split('\t');
         let t = r.next().unwrap();
         let z = r.next().unwrap();
-        let z = dbg!(z.trim_start_matches("0x"));
+        let z = z.trim_start_matches("0x");
         let z = usize::from_str_radix(z, 16).unwrap();
         (
             z,
