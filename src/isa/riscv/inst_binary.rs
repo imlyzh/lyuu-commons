@@ -23,6 +23,10 @@ pub struct IType {
 }
 
 impl IType {
+    pub fn csr(&self) -> u16 {
+        self.imm()
+    }
+
     pub fn sext_offset(&self) -> i16 {
         let sign = self.imm() >> 11;
         let filling: u16 = if sign == 0 {
