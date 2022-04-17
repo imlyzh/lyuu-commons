@@ -27,6 +27,14 @@ impl IType {
         self.imm()
     }
 
+    pub fn shamt32(&self) -> u8 {
+        (self.imm() | 0b11111) as u8
+    }
+
+    pub fn shamt(&self) -> u8 {
+        (self.imm() | 0b111111) as u8
+    }
+
     pub fn sext_offset(&self) -> i16 {
         let sign = self.imm() >> 11;
         let filling: u16 = if sign == 0 {
