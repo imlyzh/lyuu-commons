@@ -51,7 +51,7 @@ pub type Immi8 = i8;
 pub type Immi16 = i16;
 pub type Immi32 = i32;
 
-pub type Shamt = Imm32;
+pub type Shamt = Imm8;
 
 pub type Zimm = Imm8;
 
@@ -109,6 +109,7 @@ pub enum StoreType {
 }
 
 
+/*
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IOpType {
@@ -122,6 +123,7 @@ pub enum IOpType {
     Srli    = 0b0101,
     Srai    = 0b1101,
 }
+ */
 
 
 #[repr(u8)]
@@ -138,6 +140,18 @@ pub enum OpType {
     Or      = 0b0110,
     And     = 0b0111,
 }
+
+/*
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum OpWType {
+    Add     = 0b0000,
+    Sub     = 0b1000,
+    Sll     = 0b0001,
+    Srl     = 0b0101,
+    Sra     = 0b1101,
+}
+// */
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IsFenceI(pub bool);
@@ -167,8 +181,10 @@ pub enum RiscV {
     Branch(BrType, Rs1, Rs2, Immi16),
     Load(LoadType, Rd, Rs1, Immi16),
     Store(StoreType, Rs1, Rs2, Immi16),
-    OpI(IOpType, Rd, Rs1, Immi16),
+    OpI(OpType, Rd, Rs1, Immi16),
+    OpIW(OpType, Rd, Rs1, Immi16),
     Op(OpType, Rd, Rs1, Rs2),
+    OpW(OpType, Rd, Rs1, Rs2),
     Fence(IsFenceI, Pred, Succ),
     EOp(EOpType),
     CsrOp(CsrOpType, Rd, Rs1, Csr),
@@ -203,15 +219,20 @@ impl Display for RiscV {
             RiscV::Store(StoreType::Word, rs1, rs2, imm) => write!(f, "sw\t{}, {}({})", rs1, imm, rs2),
             RiscV::Store(StoreType::Double, rs1, rs2, imm) => write!(f, "sd\t{}, {}({})", rs1, imm, rs2),
 
-            RiscV::OpI(IOpType::Addi, rd, rs1, imm) => write!(f, "addi\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Slti, rd, rs1, imm) => write!(f, "slti\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Sltiu, rd, rs1, imm) => write!(f, "sltiu\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Xori, rd, rs1, imm) => write!(f, "xori\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Ori, rd, rs1, imm) => write!(f, "ori\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Andi, rd, rs1, imm) => write!(f, "andi\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Slli, rd, rs1, imm) => write!(f, "slli\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Srli, rd, rs1, imm) => write!(f, "srli\t{}, {}, {}", rd, rs1, imm),
-            RiscV::OpI(IOpType::Srai, rd, rs1, imm) => write!(f, "srai\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Add, rd, rs1, imm) => write!(f, "addi\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Slt, rd, rs1, imm) => write!(f, "slti\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Sltu, rd, rs1, imm) => write!(f, "sltiu\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Xor, rd, rs1, imm) => write!(f, "xori\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Or, rd, rs1, imm) => write!(f, "ori\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::And, rd, rs1, imm) => write!(f, "andi\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Sll, rd, rs1, imm) => write!(f, "slli\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Srl, rd, rs1, imm) => write!(f, "srli\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpI(OpType::Sra, rd, rs1, imm) => write!(f, "srai\t{}, {}, {}", rd, rs1, imm),
+
+            RiscV::OpIW(OpType::Add, rd, rs1, imm) => write!(f, "addiw\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpIW(OpType::Sll, rd, rs1, imm) => write!(f, "slliw\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpIW(OpType::Srl, rd, rs1, imm) => write!(f, "srliw\t{}, {}, {}", rd, rs1, imm),
+            RiscV::OpIW(OpType::Sra, rd, rs1, imm) => write!(f, "sraiw\t{}, {}, {}", rd, rs1, imm),
 
             RiscV::Op(OpType::Add, rd, rs1, rs2) => write!(f, "add\t{}, {}, {}", rd, rs1, rs2),
             RiscV::Op(OpType::Sub, rd, rs1, rs2) => write!(f, "sub\t{}, {}, {}", rd, rs1, rs2),
@@ -223,6 +244,12 @@ impl Display for RiscV {
             RiscV::Op(OpType::Sra, rd, rs1, rs2) => write!(f, "sra\t{}, {}, {}", rd, rs1, rs2),
             RiscV::Op(OpType::Or, rd, rs1, rs2) => write!(f, "or\t{}, {}, {}", rd, rs1, rs2),
             RiscV::Op(OpType::And, rd, rs1, rs2) => write!(f, "and\t{}, {}, {}", rd, rs1, rs2),
+
+            RiscV::OpW(OpType::Add, rd, rs1, rs2) => write!(f, "addw\t{}, {}, {}", rd, rs1, rs2),
+            RiscV::OpW(OpType::Sub, rd, rs1, rs2) => write!(f, "subw\t{}, {}, {}", rd, rs1, rs2),
+            RiscV::OpW(OpType::Sll, rd, rs1, rs2) => write!(f, "sllw\t{}, {}, {}", rd, rs1, rs2),
+            RiscV::OpW(OpType::Srl, rd, rs1, rs2) => write!(f, "srlw\t{}, {}, {}", rd, rs1, rs2),
+            RiscV::OpW(OpType::Sra, rd, rs1, rs2) => write!(f, "sraw\t{}, {}, {}", rd, rs1, rs2),
 
             RiscV::Fence(IsFenceI(false), pred, succ) => write!(f, "fence.i\t{}, {}", pred, succ),
             RiscV::Fence(IsFenceI(true), _, _) => write!(f, "fence"),
@@ -237,6 +264,8 @@ impl Display for RiscV {
             RiscV::CsrOp(CsrOpType::Rw, rd, rs1, csr) => write!(f, "csrrw\t{}, {}, {}", rd, rs1, csr),
             RiscV::CsrOp(CsrOpType::Rs, rd, rs1, csr) => write!(f, "csrrs\t{}, {}, {}", rd, rs1, csr),
             RiscV::CsrOp(CsrOpType::Rc, rd, rs1, csr) => write!(f, "csrrc\t{}, {}, {}", rd, rs1, csr),
+
+            _ => panic!("is not supported"),
         }
     }
 }

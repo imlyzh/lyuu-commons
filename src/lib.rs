@@ -1,6 +1,8 @@
 use crate::isa::riscv::reg::CSR_MAP;
 
+pub mod utils;
 pub mod isa;
+pub mod disassembly;
 
 
 #[test]
