@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use crate::isa::riscv::reg::CSR_MAP;
 
 pub mod utils;
