@@ -1,4 +1,4 @@
-// use lyuu_commons::flat_disasm::utils::bitpat;
+use lyuu_commons::flat_disasm::utils::bitpat;
 
 
 fn main() {
