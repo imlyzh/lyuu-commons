@@ -15,7 +15,7 @@ use crate::{
 /// lui
 #[inline]
 fn inst_0110111(inst: &UType) -> RiscV {
-    let imm = inst.imm().overflowing_shl(12).0 as u32;
+    let imm = inst.imm().overflowing_shl(12).0;
     let rd = inst.rd();
     RiscV::Lui(Reg(rd), imm)
 }
@@ -23,7 +23,7 @@ fn inst_0110111(inst: &UType) -> RiscV {
 /// auipc
 #[inline]
 fn inst_0010111(inst: &UType) -> RiscV {
-    let imm = inst.imm().overflowing_shl(12).0 as u32;
+    let imm = inst.imm().overflowing_shl(12).0;
     let rd = inst.rd();
     RiscV::Auipc(Reg(rd), imm)
 }
@@ -221,9 +221,9 @@ fn inst_0111011(inst: &RType) -> Option<RiscV> {
 #[inline(always)]
 fn inst_0001111(inst: &IType) -> Option<RiscV> {
     let r = match inst.funct3() {
-        0x000 => RiscV::Fence(IsFenceI(false),
+        0b000 => RiscV::Fence(IsFenceI(false),
             Pred(((inst.imm() >> 5) & 0b11111) as u8), Succ((inst.imm() & 0b11111) as u8)),
-        0x001 => RiscV::Fence(IsFenceI(true), Pred(0), Succ(0)),
+        0b001 => RiscV::Fence(IsFenceI(true), Pred(0), Succ(0)),
         _ => return None,
     };
     Some(r)
@@ -269,5 +269,5 @@ pub fn disassembly(code: u32) -> Option<(RiscV, usize)> {
             return None;
         }
     };
-    return Some((r, 4));
+    Some((r, 4))
 }
