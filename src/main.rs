@@ -1,6 +1,8 @@
-use lyuu_commons::flat_disasm::utils::bitpat;
+use lyuu_commons::flat_disasm::disasm::flat_disasm;
 
 
 fn main() {
-  bitpat(b"10 00_1001", &0b10001001u8.to_le_bytes());
+  let src = 0b11111111111111111111_00000_0110111_u32.to_le_bytes();
+  let (r, _next) = flat_disasm(&src).unwrap();
+  println!("out: {:?}", r);
 }

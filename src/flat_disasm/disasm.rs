@@ -54,7 +54,7 @@ mod test {
   fn test1() {
     use super::flat_disasm;
     let src = 0b11111111111111111111_00000_0110111_u32.to_le_bytes();
-    let r = flat_disasm(&src).unwrap();
-    println!("out: {:?}", r);
+    let _r = flat_disasm(&src).unwrap();
+    // println!("out: {:?}", r);
   }
 }
