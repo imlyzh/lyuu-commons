@@ -103,9 +103,11 @@ macro_rules! inst_temp {
 macro_rules! inst_temp {
   ($code:ident, $ext_op:expr, $($x:ident),*) => {
     {
-      use super::{FlatRiscV, DEF};
+      use super::{FlatRiscV, OpCode, DEF};
       #[allow(clippy::needless_update)]
-      FlatRiscV {opcode:$code, ext_op:$ext_op, $($x,)* ..DEF}
+      let opcode: OpCode = $code;
+      let ext_op: u16 = $ext_op;
+      FlatRiscV {opcode, ext_op, $($x,)* ..DEF}
     }
   };
 }
@@ -117,9 +119,9 @@ macro_rules! inst_temp {
 #[macro_export]
 macro_rules! rtype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd = rd!($src);
-    let rs1 = rs1!($src);
-    let rs2 = rs2!($src);
+    let rd: u8 = rd!($src);
+    let rs1: u8 = rs1!($src);
+    let rs2: u8 = rs2!($src);
     inst_temp!($code, $ext_op, rd, rs1, rs2)
   }};
 }
@@ -127,9 +129,9 @@ macro_rules! rtype {
 #[macro_export]
 macro_rules! itype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd = rd!($src);
-    let rs1 = rs1!($src);
-    let imm = sext!(iimm!($src), 12, 32) as i32 as u32;
+    let rd: u8 = rd!($src);
+    let rs1: u8 = rs1!($src);
+    let imm: u32 = sext!(iimm!($src), 12, 32) as i32 as u32;
     inst_temp!($code, $ext_op, rd, rs1, imm)
   }};
 }
@@ -137,10 +139,10 @@ macro_rules! itype {
 #[macro_export]
 macro_rules! stype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd = rd!($src);
-    let rs1 = rs1!($src);
-    let rs2 = rs2!($src);
-    let imm = sext!(simm!($src), 12, 32) as i32 as u32;
+    let rd: u8 = rd!($src);
+    let rs1: u8 = rs1!($src);
+    let rs2: u8 = rs2!($src);
+    let imm: u32 = sext!(simm!($src), 12, 32) as i32 as u32;
     inst_temp!($code, $ext_op, rd, rs1, rs2, imm)
   }};
 }
@@ -148,8 +150,8 @@ macro_rules! stype {
 #[macro_export]
 macro_rules! utype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd = rd!($src);
-    let imm = uimm!($src) << 12;
+    let rd: u8 = rd!($src);
+    let imm: u32 = uimm!($src) << 12;
     inst_temp!($code, $ext_op, rd, imm)
   }};
 }
@@ -157,9 +159,9 @@ macro_rules! utype {
 #[macro_export]
 macro_rules! btype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rs1 = rs1!($src);
-    let rs2 = rs2!($src);
-    let imm = sext!(bimm!($src), 12, 32);
+    let rs1: u8 = rs1!($src);
+    let rs2: u8 = rs2!($src);
+    let imm: u32 = sext!(bimm!($src), 12, 32);
     inst_temp!($code, $ext_op, rs1, rs2, imm)
   }};
 }
@@ -167,8 +169,8 @@ macro_rules! btype {
 #[macro_export]
 macro_rules! jtype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd = rd!($src);
-    let imm = sext!(jimm!($src), 20, 32);
+    let rd: u8 = rd!($src);
+    let imm: u32 = sext!(jimm!($src), 20, 32);
     inst_temp!($code, $ext_op, rd, imm)
   }};
 }
@@ -179,20 +181,24 @@ macro_rules! ext {
     $ext_op
   };
   () => {
-    0
+    (0 as u16)
   };
 }
 
 #[macro_export]
-macro_rules! inst_match {
+macro_rules! inst_match_packet {
   ($src:expr, $($pat:expr, $insttype:ident -> $code:ident $(.$ext_op:expr)?;)+) => {
     use super::utils::bitpat;
+    use super::{FlatRiscV, OpCode};
     $({
       if let (true, bitpatlen) = bitpat($pat, $src) {
         if bitpatlen == 4*8 {
           let r: [u8; 4] = $src.try_into().unwrap();
-          let ext = ext!($($ext_op)?);
-          return Some(($insttype!(u32::from_le_bytes(r), $code, ext), bitpatlen));
+          let r: u32 = u32::from_le_bytes(r);
+          let code: OpCode = $code;
+          let ext: u16 = ext!($($ext_op)?);
+          let riscv_pat: FlatRiscV = $insttype!(r, code, ext);
+          return Some((riscv_pat, bitpatlen));
         }
         /*
         if bitpatlen == 2 * 8 {

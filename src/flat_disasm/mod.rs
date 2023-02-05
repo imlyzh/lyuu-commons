@@ -22,8 +22,14 @@ pub enum OpCode {
   br,
   load,
   store,
-  immop,
+  iop,
+  op,
+  fence,
+  excep,
+  csr,
 }
+
+use std::fmt::Display;
 
 use OpCode::*;
 
@@ -37,6 +43,14 @@ pub struct FlatRiscV {
   pub rs2: u8,
   pub imm: u32, // imm and shamt
 }
+
+
+impl Display for FlatRiscV {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{:?}.{:b}  {}, {}, {}, 0b{:b}", self.opcode, self.ext_op, self.rd, self.rs1, self.rs2, self.imm)
+  }
+}
+
 
 // default flatrv
 pub const DEF: FlatRiscV = FlatRiscV {
