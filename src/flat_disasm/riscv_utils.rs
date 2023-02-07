@@ -65,7 +65,7 @@ macro_rules! bimm {
     let imm4_1 = bits!($i, 11, 8) as u32;
     let imm10_5 = bits!($i, 30, 25) as u32;
     let imm12 = bits!($i, 31, 31) as u32;
-    imm4_1 << 1 | imm10_5 << 5 | imm11 << 11 | imm12 << 12
+    imm12 << 12 | imm11 << 11 | imm10_5 << 5 | imm4_1 << 1
   }
   };
 }
@@ -76,7 +76,7 @@ macro_rules! jimm {
     let imm11 = bits!($i, 20, 20) as u32;
     let imm10_1 = bits!($i, 30, 21) as u32;
     let imm20 = bits!($i, 31, 31) as u32;
-    imm10_1 << 1 | imm11 << 11 | imm19_12 << 12 | imm20 << 20
+    imm20 << 20 | imm19_12 << 12 | imm11 << 11 | imm10_1 << 1
   }
   };
 }
@@ -187,7 +187,7 @@ macro_rules! ext {
 
 #[macro_export]
 macro_rules! inst_match_packet {
-  ($src:expr, $($pat:expr, $insttype:ident -> $code:ident $(.$ext_op:expr)?;)+) => {
+  ($src:expr, $($pat:expr, $insttype:ident -> $code:ident $(.$ext_op:expr)?;)*) => {
     use super::utils::bitpat;
     use super::{FlatRiscV, OpCode};
     $({
@@ -209,8 +209,7 @@ macro_rules! inst_match_packet {
         //  */
         panic!("unimplmention");
       }
-    })+
-    return None;
+    })*
   };
 }
 
@@ -252,6 +251,39 @@ pub fn jtype(i: u32) -> (u8, u32) {
 }
 // */
 
+
+////////////////////////////
+/// match macro
+
+
+macro_rules! match_ext {
+  ($src:expr, $st:stmt, $ext_op:expr) => {
+    if $src.ext_op != $ext_op { $st }
+  };
+  ($src:expr, $st:stmt,) => { $st }
+}
+
+macro_rules! match_frv {
+  ($src:expr, $($code:ident $(.$ext_op:expr)? => $st:stmt)*) => {
+  $(
+    if $src.opcode != $code {
+      match_ext!($src, $st, $($ext_op)?);
+    }
+  )*
+  }
+}
+
+// /*
+macro_rules! multi_match_frv {
+  ($src:expr, $($code:ident $(.$ext_op:expr)?),* => $st:stmt) => {
+    $(
+      if $src.opcode == $code {
+        match_ext!($src, $st, $($ext_op)?);
+      }
+    )*
+  }
+}
+//  */
 
 
 #[cfg(test)]
