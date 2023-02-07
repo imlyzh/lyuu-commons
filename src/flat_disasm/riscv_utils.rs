@@ -104,9 +104,9 @@ macro_rules! inst_temp {
   ($code:ident, $ext_op:expr, $($x:ident),*) => {
     {
       use super::{FlatRiscV, OpCode, DEF};
-      #[allow(clippy::needless_update)]
       let opcode: OpCode = $code;
       let ext_op: u16 = $ext_op;
+      #[allow(clippy::needless_update)]
       FlatRiscV {opcode, ext_op, $($x,)* ..DEF}
     }
   };
@@ -255,7 +255,7 @@ pub fn jtype(i: u32) -> (u8, u32) {
 ////////////////////////////
 /// match macro
 
-
+#[macro_export]
 macro_rules! match_ext {
   ($src:expr, $st:stmt, $ext_op:expr) => {
     if $src.ext_op != $ext_op { $st }
@@ -263,6 +263,7 @@ macro_rules! match_ext {
   ($src:expr, $st:stmt,) => { $st }
 }
 
+#[macro_export]
 macro_rules! match_frv {
   ($src:expr, $($code:ident $(.$ext_op:expr)? => $st:stmt)*) => {
   $(
@@ -273,7 +274,7 @@ macro_rules! match_frv {
   }
 }
 
-// /*
+#[macro_export]
 macro_rules! multi_match_frv {
   ($src:expr, $($code:ident $(.$ext_op:expr)?),* => $st:stmt) => {
     $(
@@ -283,7 +284,6 @@ macro_rules! multi_match_frv {
     )*
   }
 }
-//  */
 
 
 #[cfg(test)]
