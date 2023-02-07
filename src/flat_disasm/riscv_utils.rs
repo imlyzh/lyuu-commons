@@ -139,11 +139,10 @@ macro_rules! itype {
 #[macro_export]
 macro_rules! stype {
   ($src:expr, $code:ident, $ext_op:expr) => {{
-    let rd: u8 = rd!($src);
     let rs1: u8 = rs1!($src);
     let rs2: u8 = rs2!($src);
     let imm: u32 = sext!(simm!($src), 12, 32) as i32 as u32;
-    inst_temp!($code, $ext_op, rd, rs1, rs2, imm)
+    inst_temp!($code, $ext_op, rs1, rs2, imm)
   }};
 }
 

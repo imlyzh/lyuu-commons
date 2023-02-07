@@ -1,0 +1,75 @@
+
+
+00???
+00000 itype
+00000 itype
+00000 itype
+00000 itype
+00000 itype
+00000 itype
+00000 itype
+00000 itype
+00100 itype
+00100 itype
+00100 itype
+00100 itype
+00100 itype
+00100 itype
+00110 itype
+00110 itype
+00110 itype
+00110 itype
+00011 itype
+00011 itype
+
+00101 utype
+
+01000
+01000 stype
+01000 stype
+01000 stype
+
+011??
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+01100 rtype
+
+01101 utype
+
+01110 rtype
+01110 rtype
+01110 rtype
+01110 rtype
+01110 rtype
+
+
+110??
+11011 jtype
+11001 itype
+
+
+11000
+11000 btype
+11000 btype
+11000 btype
+11000 btype
+11000 btype
+11000 btype
+
+
+11100
+11100 itype
+11100 itype
+11100 itype
+11100 itype
+11100 itype
+11100 itype
+11100 itype
+11100 itype
